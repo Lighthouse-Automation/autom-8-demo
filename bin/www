@@ -7,7 +7,21 @@
 var http = require('http');
 var server = http.createServer();
 var app = require('../app');
+var mosca = require('mosca');
 var debug = require('debug')('autom-8-demo:server');
+
+/**************************************
+  MQTT broker setup and start
+ **************************************/
+var moscaSettings = {port:1884, host:'localhost'};
+var broker = new mosca.Server(moscaSettings);
+broker.on('ready', function (){
+  debug('MQTT broker started.');
+});
+
+/**************************************
+  Express app initialisation and start
+  *************************************/
 
 /**
  * Get port from environment and store in Express.
