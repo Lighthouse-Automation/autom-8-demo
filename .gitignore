@@ -26,3 +26,10 @@ node_modules
 
 # Users Environment Variables
 .lock-wscript
+
+#The autom-8 control node-red directory, stores flows and config.
+#These files are created at first start.
+control/node-red/lib*
+control/node-red/*.backup
+control/node-red/*.json
+

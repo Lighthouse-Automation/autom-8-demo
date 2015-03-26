@@ -4,9 +4,10 @@
  * Module dependencies.
  */
 
+var http = require('http');
+var server = http.createServer();
 var app = require('../app');
 var debug = require('debug')('autom-8-demo:server');
-var http = require('http');
 
 /**
  * Get port from environment and store in Express.
@@ -14,12 +15,18 @@ var http = require('http');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+app.set('server', server);
 
 /**
- * Create HTTP server.
+ * Attach HTTP server to app.
  */
 
-var server = http.createServer(app);
+server.on('request', app);
+
+/**
+ *  Now the app is setup, initialise it
+ */
+app.get('initialise')();
 
 /**
  * Listen on provided port, on all network interfaces.
