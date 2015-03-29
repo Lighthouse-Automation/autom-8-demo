@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	var client = mqqt.connect();
+	var client = mqtt.connect();
 
 	client.subscribe("/devices/loopback/+/state");
 	client.on('message', function(topic, payload) {

@@ -17,6 +17,7 @@ var debug = require('debug')('autom-8-demo:server');
 var moscaSettings = {port:1884, host:'localhost'};
 var broker = new mosca.Server(moscaSettings);
 app.set('mqtt-broswer-path', path.dirname(require.resolve("mosca")));
+broker.attachHttpServer(server);
 broker.on('ready', function (){
   debug('MQTT broker started. Pub at %s', app.get('mqtt-broswer-path'));
 });
