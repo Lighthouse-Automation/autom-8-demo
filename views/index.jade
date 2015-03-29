@@ -4,5 +4,14 @@ block content
   h1= title
   p Welcome to #{title}
   p We have embedded 
-    a(href="/control") node-red locally
-    |  to use as the controlling logic.
+    a(href="/control" target="_new") node-red locally
+    |  to use as the controlling logic. Paste in a flow,
+    |  I suggest the example, and deploy.
+
+  h2 Then click below.
+  p.loop1 
+  p.loop2 
+  script(src='https://code.jquery.com/jquery-2.1.3.js')
+  script(src='/mqtt.js')
+  script(src='/javascripts/index.js')
+
