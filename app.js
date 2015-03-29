@@ -21,6 +21,10 @@ app.set('initialise', function () {
   app.use(cookieParser());
   app.use(express.static(path.join(__dirname, 'public')));
 
+  //If the embedded mosca has set a public path, route to it.
+  if (app.get('mqtt-broswer-path')) {
+    app.use(express.static(app.get('mqtt-broswer-path') + "/public"));
+  }
 
   var routes = require('./routes/index');
   var users = require('./routes/users');

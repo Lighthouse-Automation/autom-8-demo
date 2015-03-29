@@ -8,6 +8,7 @@ var http = require('http');
 var server = http.createServer();
 var app = require('../app');
 var mosca = require('mosca');
+var path = require('path');
 var debug = require('debug')('autom-8-demo:server');
 
 /**************************************
@@ -15,8 +16,9 @@ var debug = require('debug')('autom-8-demo:server');
  **************************************/
 var moscaSettings = {port:1884, host:'localhost'};
 var broker = new mosca.Server(moscaSettings);
+app.set('mqtt-broswer-path', path.dirname(require.resolve("mosca")));
 broker.on('ready', function (){
-  debug('MQTT broker started.');
+  debug('MQTT broker started. Pub at %s', app.get('mqtt-broswer-path'));
 });
 
 /**************************************
@@ -46,9 +48,9 @@ app.get('initialise')();
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+server.listen(port);
 
 /**
  * Normalize a port into a number, string, or false.
