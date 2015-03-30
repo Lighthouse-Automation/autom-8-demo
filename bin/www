@@ -11,21 +11,6 @@ var mosca = require('mosca');
 var path = require('path');
 var debug = require('debug')('autom-8-demo:server');
 
-/**************************************
-  MQTT broker setup and start
- **************************************/
-var moscaSettings = {port:1884, host:'localhost'};
-var broker = new mosca.Server(moscaSettings);
-app.set('mqtt-broswer-path', path.dirname(require.resolve("mosca")));
-broker.attachHttpServer(server);
-broker.on('ready', function (){
-  debug('MQTT broker started. Pub at %s', app.get('mqtt-broswer-path'));
-});
-
-/**************************************
-  Express app initialisation and start
-  *************************************/
-
 /**
  * Get port from environment and store in Express.
  */
@@ -33,6 +18,27 @@ broker.on('ready', function (){
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 app.set('server', server);
+
+
+/**************************************
+  MQTT broker setup and start
+ **************************************/
+var moscaSettings = {port:1884,
+  host:'localhost',
+  http: {
+    port: app.get('port') + 1,
+  }
+};
+
+var broker = new mosca.Server(moscaSettings);
+app.set('mqtt-broswer-path', path.dirname(require.resolve("mosca")));
+broker.on('ready', function (){
+  debug('MQTT broker started. Pub at %s', app.get('mqtt-broswer-path'));
+});
+
+/**************************************
+  Express app initialisation and start
+  *************************************/
 
 /**
  * Attach HTTP server to app.
