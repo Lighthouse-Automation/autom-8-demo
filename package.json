@@ -14,7 +14,7 @@
     "morgan": "~1.5.1",
     "mosca": "^0.28.1",
     "node-red": "^0.10.4",
-    "node-red-contrib-later": "0.0.3",
+    "node-red-contrib-later": "0.0.4",
     "serve-favicon": "~2.2.0"
   }
 }
