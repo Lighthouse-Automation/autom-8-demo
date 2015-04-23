@@ -6,8 +6,15 @@ $(document).ready(function() {
 		var topicPaths = topic.split('/');
 		var devId = topicPaths[topicPaths.length -2];
 		var msg = $.parseJSON(payload);
-		$('#' + devId + '.state').text(msg.state);
+		$('#lb-' + devId + ' .state').text(msg.state);
 	});
 
-	$('.loopback, .state').text('undefined');
+	$('.container-loopback .state').text('undefined');
+	$('.container-loopback .control').click(function(event) {
+		var targId = '#' + $(this).closest('p').attr('id');
+		var targIdx = targId.charAt(targId.length - 1);
+		var msg = {};
+		msg['action'] = $(targId + ' .state').text() === 'on' ? 'off':'on';
+		client.publish('/devices/loopback/' + targIdx + '/newstate', JSON.stringify(msg));
+	});
 });

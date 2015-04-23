@@ -3,15 +3,16 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
-  p We have embedded 
-    a(href="/control" target="_new") node-red locally
-    |  to use as the controlling logic. Paste in a flow,
-    |  I suggest the example, and deploy.
+  p.
+    #[a(href="http://nodered.org/" target="n-rorg") Node-red]
+     is embedded as the #[a(href="/control" target="a8-control") control logic].
+     The default device is a loopback digital device.
+  .container-loopback
+    h2 The loopback device
+    for label, i in ["one", "two"]
+      p(id='lb-'+ (i+1)).
+        Channel #{label} is #[span.state null]. #[span.control Click here to toggle]
 
-  h2 Then click below.
-  p#1.loopback.state 
-  p#2.loopback.state 
   script(src='https://code.jquery.com/jquery-2.1.3.js')
   script(src='/mqtt.js')
   script(src='/javascripts/index.js')
-
