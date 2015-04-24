@@ -19,18 +19,23 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 app.set('server', server);
 
-
 /**************************************
   MQTT broker setup and start
  **************************************/
-var moscaSettings = {port:1884,
+var moscaSettings = {
+  port:1884,
   host:'localhost',
   http: {
-    port: app.get('port') + 1,
+    port: app.get('port') + 1
+  },
+  persistence: {
+    factory: mosca.persistence.LevelUp,
+    path: path.join(__dirname, '../control/data')
   }
 };
 
 var broker = new mosca.Server(moscaSettings);
+
 app.set('mqtt-broswer-path', path.dirname(require.resolve("mosca")));
 broker.on('ready', function (){
   debug('MQTT broker started. Pub at %s', app.get('mqtt-broswer-path'));
