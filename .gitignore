@@ -33,3 +33,5 @@ control/node-red/lib*
 control/node-red/*.backup
 control/node-red/*.json
 
+#The data directory store mqtt persistence
+control/data/*
