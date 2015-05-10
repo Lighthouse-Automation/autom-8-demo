@@ -26,12 +26,12 @@ SOFTWARE.
 
 /* This module provides a user model using levelDB as a data store */
 
-var levelup = require('levelUp'),
+var level = require('level'),
 	path = require('path'),
 	bcrypt = require('bcrypt')
 
 /* Constructor */
-var function Users(db) {
+var Users = function(db) {
 	//Try and gloss over we don't seem to be called with 'new'
 	if(!(this instanceof Users)) {
 		return new Users(db);
@@ -48,7 +48,7 @@ var function Users(db) {
   	//If a null object is passed, or the db type is a string, create a new
   	//database, don't add error callback, let it throw.
   	if (!db || typeof db === 'string') {
-    	db = levelup(dbPath, {
+    	db = level(dbPath, {
       		keyEncoding: 'utf8',
       		valueEncoding: 'json'
     	})
@@ -59,7 +59,7 @@ var function Users(db) {
 };
 
 //Local var to hold prototype, for convinence
-var p = User.prototype;
+var p = Users.prototype;
 
 /* Methods */
 p.findOne = function (keyStr, cb) {
@@ -98,6 +98,12 @@ p.checkPass = function (userKey, pass, cb) {
 	});
 };
 
+/*
+	BE AWARE: This is expensive, iterating over all keys to count them. 
+	This implementation is designed for deployment in 'edge of network' 
+	applications, hence not thousands of users, and device embeddable footprint.
+	If you have lots of users, consider another model...REDIS?, MONGO?....
+*/
 p.countThem = function (cb) {
 	var count = 0;
 
