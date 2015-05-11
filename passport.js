@@ -24,43 +24,48 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+/*jslint node: true */
+"use strict";
+
 /* Initiialise and setup passport for user auth */
 
 var passport = require('passport'),
-	LocalStrategy = require('passport-local').Strategy;
+	LocalStrategy = require('passport-local').Strategy,
 	users = require('./models/users-level')();
 
 var ppOpts = {
 	usernameField: 'username',
 	passwordField: 'password',
-	passReqToCallback: true };
+	passReqToCallback: true
+};
 
 passport.use('local-add-user', new LocalStrategy(ppOpts,
 	function (req, username, password, done) {
 		users.findOne({'local.username': username}, function (err, user) {
-			if (err) //Somehow the lookup failed
+			if (err) { //Somehow the lookup failed
 				return done(err);
+      }
 			if (user) { //There is already a user with that name
 				return done(null, false);
 			}
 			users.addOne(username, password, {}, function (err) {
-				if(err) //Couldn't save user
+				if (err) { //Couldn't save user
 					return done(err);
+        }
 				//We have save a new user to the model
 				return done(null);
 			});
 		});
-	})
-);
+	}));
 
 passport.use('local-login', new LocalStrategy(ppOpts,
 	function (req, username, password, done) {
 		users.checkPass({'local.username': username}, password, function (err, user) {
-			if (err) //Somehow the password check failed
+			if (err) { //Somehow the password check failed
 				return done(err);
+      }
 			return done(null, user);
 		});
-	})
-);
+	}));
 
 module.exports = passport;
