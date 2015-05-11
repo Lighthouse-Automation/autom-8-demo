@@ -89,12 +89,23 @@ p.delOne = function (keyStr, cb) {
 
 p.checkPass = function (userKey, pass, cb) {
   this.findOne(userKey, function (err, user) {
-    if (err || !user) {
-      return cb("Couldn't find user", null);
+    if (err) {
+      return cb(err);
+    }
+    if (!user) {
+      var er = new Error("User doesn't exist.");
+      er.name = 'AuthErr';
+      er.propertyName = 'username';
+      er.propertyValue = userKey;
+      return cb(er);
     }
     bcrypt.compare(pass, user.pass, function (err, res) {
       if (err) {
-        return cb("Wrong pass", null);
+        var er = new Error("Wrong password.");
+        er.name = 'AuthErr';
+        er.propertyName = 'password';
+        er.propertyValue = pass;
+        return cb(er);
       }
       return cb(null, user);
     });
