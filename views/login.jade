@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1 #{title} Login
+  if message && message.length > 0
+    .alert-mess #{message}
+  form(class='log-in', action="/login" method="post")
+    .form-group
+      label(for='login') Username:
+      input(type="text" id='login' class="form-control" name="login")
+    .form-group
+      label(for='pword') Password:
+      input(type="password" id='pword' class="form-control" name="password")
+    .form-group
+      label(for='btn')
+      button(type="submit" class="btn btn-warning btn-lg") Login
