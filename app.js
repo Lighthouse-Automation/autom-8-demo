@@ -31,11 +31,17 @@ var express = require('express'),
   path = require('path'),
   favicon = require('serve-favicon'),
   logger = require('morgan'),
-  cookieParser = require('cookie-parser'),
-  bodyParser = require('body-parser'),
-  passport = require('./passport');
+  jwt = require('express-jwt'),
+  bodyParser = require('body-parser');
 
 var app = express();
+
+// Load a config object
+var config = {};
+
+if (process.env.CONFIG) {
+  config = require(process.env.CONFIG);
+}
 
 app.set('initialise', function () {
 
@@ -48,8 +54,12 @@ app.set('initialise', function () {
   app.use(logger('dev'));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(cookieParser());
   app.use(express['static'](path.join(__dirname, 'public')));
+
+  // set the jwt secret for all modules to use
+  app.set('jwtSecret', config.jwtSecret || 'default secret, change it!');
+  //express middleware to check jwt, and add decoded token to user request
+  app.use(jwt({ secret: app.get('jwtSecret')}).unless({path: [/\login/]}));
 
   //If the embedded mosca has set a public path, route to it.
   if (app.get('mqtt-broswer-path')) {
@@ -59,7 +69,7 @@ app.set('initialise', function () {
   var routes = require('./routes/index'),
     users = require('./routes/users');
   app.use('/', routes);
-  app.use('/users', users);
+  app.use('/login', users);
   //The node-red route adds itself to the stack
   require('./routes/node-red');
 

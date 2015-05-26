@@ -31,7 +31,7 @@ SOFTWARE.
 
 var passport = require('passport'),
 	LocalStrategy = require('passport-local').Strategy,
-	users = require('./models/users-level')();
+	users = require('./users-level')();
 
 var ppOpts = {
 	usernameField: 'username',
@@ -41,18 +41,18 @@ var ppOpts = {
 
 passport.use('local-add-user', new LocalStrategy(ppOpts,
 	function (req, username, password, done) {
-		users.findOne({'local.username': username}, function (err, user) {
+		users.findOne(username, function (err, user) {
 			if (err) { //Somehow the lookup failed
 				return done(err);
       }
 			if (user) { //There is already a user with that name
-				return done(null, false);
+				return done(null, false, 'User : ' + username + ' already exists.');
 			}
 			users.addOne(username, password, {}, function (err) {
 				if (err) { //Couldn't save user
 					return done(err);
         }
-				//We have save a new user to the model
+				//We have saved a new user to the model
 				return done(null);
 			});
 		});
@@ -60,10 +60,16 @@ passport.use('local-add-user', new LocalStrategy(ppOpts,
 
 passport.use('local-login', new LocalStrategy(ppOpts,
 	function (req, username, password, done) {
-		users.checkPass({'local.username': username}, password, function (err, user) {
+		users.checkPass(username, password, function (err, user) {
 			if (err) { //Somehow the password check failed
+				//If it is an AuthErr then the username/password is invalid
+        if (err.name === 'AuthErr') {
+          return done(null, false, err.message);
+        }
+        //Otherwise it is some other sort of lookup error...
 				return done(err);
       }
+      //Else we have found our user, return it
 			return done(null, user);
 		});
 	}));

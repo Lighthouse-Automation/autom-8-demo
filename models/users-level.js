@@ -76,6 +76,7 @@ p.addOne = function (keyStr, pass, data, cb) {
       return cb(err, false);
     }
     var usr = {
+      user: keyStr,
       pass: pw,
       data: data
     };
