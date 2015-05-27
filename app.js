@@ -31,6 +31,8 @@ var express = require('express'),
   path = require('path'),
   favicon = require('serve-favicon'),
   logger = require('morgan'),
+  session = require('express-session'),
+  flash = require('connect-flash'),
   jwt = require('express-jwt'),
   bodyParser = require('body-parser');
 
@@ -51,6 +53,12 @@ app.set('initialise', function () {
 
   // uncomment after placing your favicon in /public
   //app.use(favicon(__dirname + '/public/favicon.ico'));
+  app.use(session({
+    secret: config.sessSecret || 'not so secret',
+    name: config.cookName || 'autom8demo.sid',
+    cookie: {maxAge: config.cookAge || 60000}
+  }));
+  app.use(flash());
   app.use(logger('dev'));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
@@ -87,10 +95,14 @@ app.set('initialise', function () {
   if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
       res.status(err.status || 500);
-      res.render('error', {
-        message: err.message,
-        error: err
-      });
+      if (err.status === 302) {
+        res.redirect(err.redirPath || path.join(req.baseUrl, req.path));
+      } else {
+        res.render('error', {
+          message: err.message,
+          error: err
+        });
+      }
     });
   }
 
@@ -98,10 +110,14 @@ app.set('initialise', function () {
   // no stacktraces leaked to user
   app.use(function (err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: {}
-    });
+    if (err.status === 302) {
+      res.redirect(err.redirPath || path.join(req.baseUrl, req.path));
+    } else {
+      res.render('error', {
+        message: err.message,
+        error: {}
+      });
+    }
   });
 });
 
